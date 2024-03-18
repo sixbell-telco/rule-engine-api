@@ -9,7 +9,7 @@ info:
    
     Some useful links:
     - [The Rule Engine repository](https://gitlab.com/sixbell/componentes/rule-engine/backend)
-    - [The source API definition for the Rule Engine](https://gitlab.com/sixbell/componentes/rule-engine/api/openapi.yaml)
+    - [The source API definition for the Rule Engine](https://gitlab.com/sixbell/componentes/rule-engine/api/-/blob/develop/openapi.yaml?ref_type=heads)
   termsOfService: http://swagger.io/terms/
   contact:
     email: rule-engine@sixbell.com
