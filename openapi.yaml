@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Swagger Rule Engine - OpenAPI 3.0
-  description: |-
+  description: |
     This is a Rule Engine based on the OpenAPI 3.0 specification.  You can find out more about
     Swagger at [https://swagger.io](https://swagger.io). In the first iteration of the Rule Engine, we've switched to the design first approach!
     You can now help us improve the API whether it's by making changes to the definition itself or to the code.
