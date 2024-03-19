@@ -1,0 +1,1071 @@
+openapi: 3.0.3
+info:
+  title: Swagger Rule Engine - OpenAPI 3.0
+  description: |-
+    This is a Rule Engine based on the OpenAPI 3.0 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the first iteration of the Rule Engine, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+   
+    Some useful links:
+    - [The Rule Engine repository](https://gitlab.com/sixbell/componentes/rule-engine/backend)
+    - [The source API definition for the Rule Engine](https://gitlab.com/sixbell/componentes/rule-engine/api/-/blob/develop/openapi.yaml?ref_type=heads)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: rule-engine@sixbell.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://rule-engine.sixbell.com/api/v1
+tags:
+  - name: context
+    description: Operations about contexts
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: var-type
+    description: Operations about variable types
+    externalDocs:
+      description: Find out more about our store
+      url: http://swagger.io
+  - name: variable
+    description: Operations about variables
+    externalDocs:
+      description: Find out more about our store
+      url: http://swagger.io
+  - name: rule
+    description: Operations about rules
+  - name: executions
+    description: Operations about executions
+paths:
+  /contexts:
+    post:
+      tags:
+        - context
+      summary: create context
+      description:  |
+        Create a new Context Rule.
+      operationId: createContext
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContextCreateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok: 
+                  $ref: '#/components/examples/ContextCreateOrModifyOkResponseExample'
+                alreadyExists:
+                  $ref: '#/components/examples/ContextAlreadyExistsResponseExample'
+                exception:
+                  $ref: '#/components/examples/ContextExceptionResponseExample'
+                otherException:
+                  $ref: '#/components/examples/ContextOtherExceptionResponseExample'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - context
+      summary: modify context
+      description:  |
+        Modify a Context Rule.
+      operationId: modifyContext
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContextModifyRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok: 
+                  $ref: '#/components/examples/ContextCreateOrModifyOkResponseExample'
+                notFound:
+                  $ref: '#/components/examples/ContextNotFoundResponseExample'
+                exception:
+                  $ref: '#/components/examples/ContextExceptionResponseExample'
+                otherException:
+                  $ref: '#/components/examples/ContextOtherExceptionResponseExample'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    get:
+      tags:
+        - context
+      summary: list contexts
+      description:  |
+        Service to list all contexts.
+      operationId: listContext
+      parameters:
+        - name: label
+          in: query
+          description: label
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: statusId
+          in: query
+          description: statusId
+          required: false
+          style: form
+          schema:
+            type: string        
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok:
+                  $ref: '#/components/examples/ContextListOkResponseExample' 
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /contexts/{contextId}:
+    get:
+      tags:
+        - context
+      summary: get context
+      description:  |
+        Get details of context.
+      operationId: getContext
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok:
+                  $ref: '#/components/examples/ContextGetOkResponseExample'
+                notExists:
+                  $ref: '#/components/examples/ContextNotFoundResponseExample' 
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - context
+      summary: delete context
+      description:  |
+        Service to delete a context.
+      operationId: deleteContext
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok:
+                  $ref: '#/components/examples/ContextGetOkResponseExample'
+                notExists:
+                  $ref: '#/components/examples/ContextNotFoundResponseExample'  
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden      
+  /contexts/{contextId}/variables:
+    post:
+      tags:
+        - variable
+      summary: create variable
+      description:  |
+        Create a new variable and associates a context.
+      operationId: createVariable
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VariableCreateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok: 
+                  $ref: '#/components/examples/VariableCreateOrModifyOkResponseExample'
+                alreadyExists:
+                  $ref: '#/components/examples/VariableAlreadyExistsResponseExample'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - variable
+      summary: modify variable
+      description:  |
+        Modify a Variable.
+      operationId: modifyVariable
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VariableModifyRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok: 
+                  $ref: '#/components/examples/VariableCreateOrModifyOkResponseExample'
+                notFound:
+                  $ref: '#/components/examples/VariableNotFoundResponseExample'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    get:
+      tags:
+        - variable
+      summary: list variables
+      description:  |
+        Service to list all variables of a context.
+      operationId: listVariable
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+        - name: name
+          in: query
+          description: name
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: type
+          required: false
+          style: form
+          schema:
+            type: string    
+        - name: format
+          in: query
+          description: format
+          required: false
+          style: form
+          schema:
+            type: string    
+        - name: statusId
+          in: query
+          description: statusId
+          required: false
+          style: form
+          schema:
+            type: string        
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok:
+                  $ref: '#/components/examples/VariableListOkResponseExample' 
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /contexts/{contextId}/variable/{variableId}:
+    get:
+      tags:
+        - variable
+      summary: get variable
+      description:  |
+        Get details of variable.
+      operationId: getVariable
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+        - name: variableId
+          in: path
+          description: variableId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64    
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok:
+                  $ref: '#/components/examples/VariableGetOkResponseExample'
+                notExists:
+                  $ref: '#/components/examples/VariableNotFoundResponseExample' 
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - variable
+      summary: delete variable
+      description:  |
+        Service to delete a variable.
+      operationId: deleteVariable
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+        - name: variableId
+          in: path
+          description: variableId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64   
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok:
+                  $ref: '#/components/examples/VariableGetOkResponseExample'
+                notExists:
+                  $ref: '#/components/examples/VariableNotFoundResponseExample'  
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /contexts/{contextId}/rules:
+    post:
+      tags:
+        - rule
+      summary: create rule
+      description:  |
+        Create a new rule and associates a context.
+      operationId: createRule
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleCreateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok: 
+                  $ref: '#/components/examples/RuleCreateOrModifyOkResponseExample'
+                alreadyExists:
+                  $ref: '#/components/examples/RuleAlreadyExistsResponseExample'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - rule
+      summary: modify rule
+      description:  |
+        Modify a Rule.
+      operationId: modifyRule
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleModifyRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok: 
+                  $ref: '#/components/examples/RuleCreateOrModifyOkResponseExample'
+                notFound:
+                  $ref: '#/components/examples/RuleNotFoundResponseExample'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    get:
+      tags:
+        - rule
+      summary: list rules
+      description:  |
+        Service to list all rules of a context.
+      operationId: listRules
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+        - name: statusId
+          in: query
+          description: statusId
+          required: false
+          style: form
+          schema:
+            type: string        
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok:
+                  $ref: '#/components/examples/RuleListOkResponseExample' 
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /contexts/{contextId}/rules/{ruleId}:
+    get:
+      tags:
+        - rule
+      summary: get rule
+      description:  |
+        Get details of rule.
+      operationId: getRule
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+        - name: ruleId
+          in: path
+          description: ruleId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64    
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok:
+                  $ref: '#/components/examples/RuleGetOkResponseExample'
+                notExists:
+                  $ref: '#/components/examples/RuleNotFoundResponseExample' 
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - rule
+      summary: delete rule
+      description:  |
+        Service to delete a rule.
+      operationId: deleteRule
+      parameters:
+        - name: contextId
+          in: path
+          description: contextId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+        - name: ruleId
+          in: path
+          description: ruleId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64   
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok:
+                  $ref: '#/components/examples/RuleGetOkResponseExample'
+                notExists:
+                  $ref: '#/components/examples/RuleNotFoundResponseExample'  
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /var-types:
+    get:
+      tags:
+        - var-type
+      summary: list variable types
+      description:  |
+        Service to list all availables variable types.
+      operationId: listVarTypes
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok:
+                  $ref: '#/components/examples/VarTypeListOkResponseExample' 
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found                     
+  /rule-executions:
+    post:
+      tags:
+        - executions
+      summary: run execution
+      description:  |
+        Run a execution over a context.
+      operationId: createExecution
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutionCreateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok: 
+                  $ref: '#/components/examples/ExecutionCreateOrModifyOkResponseExample'
+                
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+components:
+  schemas:
+    ContextCreateRequest:
+      title: ContextCreateRequest
+      required:
+        - label        
+      type: object
+      properties:
+        label:
+          type: string
+          maxLength: 100
+          minLength: 10
+          example: "SB_MVT_CONTEXT"
+        description:
+          type: string
+          maxLength: 1000
+          minLength: 0
+          example: "Service Broker Movistar Context"
+        ini_date:
+          type: string
+          example: "2024-03-14 12:30:00"
+        end_date:
+          type: string
+          example: "2025-03-14 12:30:00"
+        status:
+          type: integer
+          format: int32
+          example: 1
+    ContextModifyRequest:
+      title: ContextModifyRequest
+      required:
+        - contextId
+        - label        
+      type: object
+      properties:
+        contextId:
+          type: integer
+          format: int32
+          example: 1000
+        label:
+          type: string
+          maxLength: 100
+          minLength: 10
+          example: "SB_MVT_CONTEXT"
+        description:
+          type: string
+          maxLength: 1000
+          minLength: 0
+          example: "New description for context"
+        ini_date:
+          type: string
+          example: "2024-03-14 12:30:00"
+        end_date:
+          type: string
+          example: ""
+        status:
+          type: integer
+          format: int32
+          example: 2
+    VariableCreateRequest:
+      title: VariableCreateRequest
+      required:
+        - name
+        - typeId
+        - format        
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 10
+          example: "BLOCKS_COUNTER"
+        description:
+          type: string
+          maxLength: 1000
+          minLength: 0
+          example: "Variable to storage a blocks counter"
+        typeId:
+          type: integer
+          format: int32
+          example: 1000
+        format:
+          type: string
+          enum:
+            - In
+            - Out
+          example: "In"
+    VariableModifyRequest:
+      title: VariableModifyRequest
+      required:
+        - variableId
+        - name
+        - typeId
+        - format        
+      type: object
+      properties:
+        variableId:
+          type: integer
+          format: int32
+          example: 1000
+        name:
+          type: string
+          maxLength: 100
+          minLength: 10
+          example: "BLOCKS_COUNTER_REDIS"
+        description:
+          type: string
+          maxLength: 1000
+          minLength: 0
+          example: "New description to variable"
+        typeId:
+          type: integer
+          format: int32
+          example: 1000
+        format:
+          type: string
+          enum:
+            - In
+            - Out
+          example: "Out"    
+    RuleCreateRequest:
+      title: RuleCreateRequest
+      required:
+        - priority
+        - when        
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 10
+          example: "SpeedUp"
+        description:
+          type: string
+          maxLength: 1000
+          minLength: 0
+          example: "When testcar is speeding up we increase the speed."
+        priority:
+          type: integer
+          format: int32
+          example: 1
+        when:
+          type: string
+          example: "TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed"
+        then:
+          type: string
+          example: "TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement"
+        status:
+          type: integer
+          format: int32
+          example: 1    
+    RuleModifyRequest:
+      title: RuleModifyRequest
+      required:
+        - ruleId
+        - priority
+        - when        
+      type: object
+      properties:
+        ruleId:
+          type: integer
+          format: int32
+          example: 1000
+        name:
+          type: string
+          maxLength: 100
+          minLength: 10
+          example: "SpeedUp Modified"
+        description:
+          type: string
+          maxLength: 1000
+          minLength: 0
+          example: "When testcar is speeding up we increase the speed."
+        priority:
+          type: integer
+          format: int32
+          example: 1
+        when:
+          type: string
+          example: "TestCar.SpeedUp == true && TestCar.Speed <= TestCar.MaxSpeed"
+        then:
+          type: string
+          example: "TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement" 
+        status:
+          type: integer
+          format: int32
+          example: 1
+    ExecutionCreateRequest:
+      title: ExecutionCreateRequest
+      required:
+        - context
+        - variables        
+      type: object
+      properties:
+        label:
+          type: string
+          maxLength: 100
+          minLength: 10
+          example: "SB_MVT_CONTEXT"
+        variables:
+          type: array
+          items:
+              type:  object
+          example: [{"SpeedUp": true},{"Speed": 100}, {"MaxSpeed": 120}]
+    ResponseMessage:
+      title: ResponseMessage
+      type: object
+      properties:
+        codError:
+          type: integer
+          format: int32
+        descError:
+          type: string
+        dto:
+          type: object      
+  examples:
+    ContextCreateOrModifyOkResponseExample:
+     value:
+      codError: 0
+      descError: "OK"
+      dto:
+        contextId: 1000       
+    ContextAlreadyExistsResponseExample:        
+      value:
+        codError: 1000
+        descError: "Context Already Exists"
+        dto: null
+    ContextExceptionResponseExample:  
+      value:
+        codError: 1001
+        descError: "Exception"
+        dto: null
+    ContextOtherExceptionResponseExample:  
+      value:
+        codError: 1002
+        descError: "Other Exception"
+        dto: null
+    ContextNotFoundResponseExample:  
+      value:
+        codError: 1003
+        descError: "ContextNotFound"
+        dto: null
+    ContextGetOkResponseExample:
+      value:
+        codError: 0
+        descError: "OK"
+        dto:
+          contextId: 1000
+          label: "SV_MVT_CONTEXT"
+          description: "Service Broker Movistar Context" 
+          ini_date: "2024-03-14 12:30:00"
+          end_date: "2025-03-14 12:30:00" 
+          statusId : 1
+    ContextListOkResponseExample:
+      value:      
+        codError: 0
+        descError: "OK"
+        dto:
+          contexts: [{"contextId":1000,"label":"SV_MVT_CONTEXT", "description":"Service Broker Movistar Context", "ini_date":"2024-03-14 12:30:00", "end_date":"2025-03-14 12:30:00", "statusId":1},{"contextId":1001,"label":"TMP_TELCEL_CONTEXT", "description":"TMP Telcel Context", "ini_date":"2024-04-10 00:00:00", "end_date":"", "statusId":1} ]    
+    ContextDeleteOkResponseExample:
+     value:
+      codError: 0
+      descError: "OK"
+      dto: null
+    VariableCreateOrModifyOkResponseExample:
+     value:
+      codError: 0
+      descError: "OK"
+      dto:
+        variableId: 1000          
+    VariableAlreadyExistsResponseExample:        
+      value:
+        codError: 2000
+        descError: "Variable Already Exists"
+        dto: null
+    VariableNotFoundResponseExample:  
+      value:
+        codError: 2003
+        descError: "VariableNotFound"
+        dto: null
+    VariableGetOkResponseExample:
+      value:
+        codError: 0
+        descError: "OK"
+        dto:
+          contextId: 1000
+          variableId: 1000
+          name: "BLOCKS_COUNTER"
+          description: "Variable to storage a blocks counter"
+          typeId: 1000
+          format: "In"
+    VariableListOkResponseExample:
+      value:      
+        codError: 0
+        descError: "OK"
+        dto:
+          variables: [{"variableId":1000,"name":"BLOCKS_COUNTER", "description":"Variable to storage a blocks counter", "typeId":1000, "format":"In"},{"variableId":1001,"name":"ROUTE_IP", "description":"Variable to storage a route ip", "typeId":1001, "format":"In"} ]    
+    VariableDeleteOkResponseExample:
+     value:
+      codError: 0
+      descError: "OK"
+      dto: null    
+    RuleCreateOrModifyOkResponseExample:
+     value:
+      codError: 0
+      descError: "OK"
+      dto:
+        ruleId: 1000          
+    RuleAlreadyExistsResponseExample:        
+      value:
+        codError: 3000
+        descError: "Rule Already Exists"
+        dto: null
+    RuleNotFoundResponseExample:  
+      value:
+        codError: 3003
+        descError: "RuleNotFound"
+        dto: null
+    RuleGetOkResponseExample:
+      value:
+        codError: 0
+        descError: "OK"
+        dto:
+          contextId: 1000
+          ruleId: 1000
+          name: "SpeedUp"
+          description: "When testcar is speeding up we increase the speed."
+          priority: 1
+          when: "TestCar.SpeedUp == true && TestCar.Speed <= TestCar.MaxSpeed"
+          then: "TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement"
+    RuleListOkResponseExample:
+      value:      
+        codError: 0
+        descError: "OK"
+        dto:
+          contexts: [{"contextId":1000, "ruleId":1000,"name":"SpeedUp", "description":"When testcar is speeding up we increase the speed.", "priority": 1, "when":"TestCar.SpeedUp == true && TestCar.Speed <= TestCar.MaxSpeed", "then":"TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement" },{"contextId":1000, "ruleId":1001,"name":"SpeedDown", "description":"When testcar is speeding down we decrease the speed.", "priority": 2, "when":"TestCar.SpeedDown == true && TestCar.Speed >= TestCar.MaxSpeed", "then":"TestCar.Speed = TestCar.Speed + TestCar.SpeedDecrement" } ]    
+    RuleDeleteOkResponseExample:
+     value:
+      codError: 0
+      descError: "OK"
+      dto: null 
+    VarTypeListOkResponseExample:
+      value:      
+        codError: 0
+        descError: "OK"
+        dto:
+          contexts: [{"typeId":1000, "type":"Integer"},{"typeId":1001, "type":"String"},{"typeId":1002, "type":"Boolean"} ]    
+    ExecutionCreateOrModifyOkResponseExample:
+     value:
+      codError: 0
+      descError: "OK"
+      dto:
+        contextId: 1000
+        label: "SB_MVT_CONTEXT"
+        variables: [{"Speed":110}] 
