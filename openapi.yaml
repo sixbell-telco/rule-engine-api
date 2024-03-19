@@ -1068,4 +1068,4 @@ components:
       dto:
         contextId: 1000
         label: "SB_MVT_CONTEXT"
-        variables: [{"Speed":110}] 
+        variables: [{"Speed":110}]
