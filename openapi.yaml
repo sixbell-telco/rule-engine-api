@@ -57,29 +57,28 @@ paths:
             schema:
               $ref: '#/components/schemas/ContextCreateRequest'
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ResponseMessage'
               examples:
                 ok: 
-                  $ref: '#/components/examples/ContextCreateOrModifyOkResponseExample'
+                  $ref: '#/components/examples/ContextCreateOrModifyOkResponseExample'               
+        '400':
+          description: Business Logic Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
                 alreadyExists:
-                  $ref: '#/components/examples/ContextAlreadyExistsResponseExample'
-                exception:
-                  $ref: '#/components/examples/ContextExceptionResponseExample'
-                otherException:
-                  $ref: '#/components/examples/ContextOtherExceptionResponseExample'
-        '201':
-          description: Created
+                  $ref: '#/components/examples/ContextAlreadyExistsResponseExample'    
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
-        '404':
-          description: Not Found
     put:
       tags:
         - context
@@ -102,20 +101,28 @@ paths:
               examples:
                 ok: 
                   $ref: '#/components/examples/ContextCreateOrModifyOkResponseExample'
-                notFound:
-                  $ref: '#/components/examples/ContextNotFoundResponseExample'
-                exception:
-                  $ref: '#/components/examples/ContextExceptionResponseExample'
-                otherException:
-                  $ref: '#/components/examples/ContextOtherExceptionResponseExample'
-        '201':
-          description: Created
+        '400':
+          description: Business Logic Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                alreadyExists:
+                  $ref: '#/components/examples/ContextAlreadyExistsResponseExample'              
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
         '404':
           description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/ContextNotFoundResponseExample'
     get:
       tags:
         - context
@@ -124,9 +131,9 @@ paths:
         Service to list all contexts.
       operationId: listContext
       parameters:
-        - name: label
+        - name: name
           in: query
-          description: label
+          description: name
           required: false
           style: form
           schema:
@@ -148,12 +155,21 @@ paths:
               examples:
                 ok:
                   $ref: '#/components/examples/ContextListOkResponseExample' 
+        '400':
+          description: Business Logic Error
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
         '404':
           description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/ContextNotFoundResponseExample'
   /contexts/{contextId}:
     get:
       tags:
@@ -181,14 +197,21 @@ paths:
               examples:
                 ok:
                   $ref: '#/components/examples/ContextGetOkResponseExample'
-                notExists:
-                  $ref: '#/components/examples/ContextNotFoundResponseExample' 
+        '400':
+          description: Business Logic Error
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
         '404':
           description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/ContextNotFoundResponseExample'
     delete:
       tags:
         - context
@@ -214,15 +237,61 @@ paths:
                 $ref: '#/components/schemas/ResponseMessage'
               examples:
                 ok:
-                  $ref: '#/components/examples/ContextGetOkResponseExample'
-                notExists:
-                  $ref: '#/components/examples/ContextNotFoundResponseExample'  
-        '204':
-          description: No Content
+                  $ref: '#/components/examples/ContextGetOkResponseExample' 
+        '400':
+          description: Business Logic Error                         
         '401':
           description: Unauthorized
         '403':
-          description: Forbidden      
+          description: Forbidden
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/ContextNotFoundResponseExample'        
+  /contexts/execute:
+    post:
+      tags:
+        - context
+      summary: Execute rules of a context.
+      description:  |
+        Execute rules of a context.
+      operationId: executeContext
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecuteCreateRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                ok: 
+                  $ref: '#/components/examples/ExecuteCreateOrModifyOkResponseExample'               
+        '400':
+          description: Business Logic Error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/ContextNotFoundResponseExample'      
+
   /contexts/{contextId}/variables:
     post:
       tags:
@@ -246,8 +315,8 @@ paths:
             schema:
               $ref: '#/components/schemas/VariableCreateRequest'
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             '*/*':
               schema:
@@ -255,16 +324,19 @@ paths:
               examples:
                 ok: 
                   $ref: '#/components/examples/VariableCreateOrModifyOkResponseExample'
+        '400':
+          description: Business Logic Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
                 alreadyExists:
                   $ref: '#/components/examples/VariableAlreadyExistsResponseExample'
-        '201':
-          description: Created
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
-        '404':
-          description: Not Found
     put:
       tags:
         - variable
@@ -296,16 +368,21 @@ paths:
               examples:
                 ok: 
                   $ref: '#/components/examples/VariableCreateOrModifyOkResponseExample'
-                notFound:
-                  $ref: '#/components/examples/VariableNotFoundResponseExample'
-        '201':
-          description: Created
+        '400':
+          description: Business Logic Error  
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
         '404':
           description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/VariableNotFoundResponseExample'
     get:
       tags:
         - variable
@@ -336,9 +413,9 @@ paths:
           style: form
           schema:
             type: string    
-        - name: format
+        - name: direction
           in: query
-          description: format
+          description: direction
           required: false
           style: form
           schema:
@@ -360,12 +437,21 @@ paths:
               examples:
                 ok:
                   $ref: '#/components/examples/VariableListOkResponseExample' 
+        '400':
+          description: Business Logic Error            
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
         '404':
           description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/VariableNotFoundResponseExample'          
   /contexts/{contextId}/variable/{variableId}:
     get:
       tags:
@@ -401,14 +487,21 @@ paths:
               examples:
                 ok:
                   $ref: '#/components/examples/VariableGetOkResponseExample'
-                notExists:
-                  $ref: '#/components/examples/VariableNotFoundResponseExample' 
+        '400':
+          description: Business Logic Error                
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
         '404':
           description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/VariableNotFoundResponseExample'
     delete:
       tags:
         - variable
@@ -443,14 +536,21 @@ paths:
               examples:
                 ok:
                   $ref: '#/components/examples/VariableGetOkResponseExample'
-                notExists:
-                  $ref: '#/components/examples/VariableNotFoundResponseExample'  
-        '204':
-          description: No Content
+        '400':
+          description: Business Logic Error                
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/VariableNotFoundResponseExample'  
   /contexts/{contextId}/rules:
     post:
       tags:
@@ -474,8 +574,8 @@ paths:
             schema:
               $ref: '#/components/schemas/RuleCreateRequest'
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             '*/*':
               schema:
@@ -483,16 +583,19 @@ paths:
               examples:
                 ok: 
                   $ref: '#/components/examples/RuleCreateOrModifyOkResponseExample'
+        '400':
+          description: Business Logic Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
                 alreadyExists:
-                  $ref: '#/components/examples/RuleAlreadyExistsResponseExample'
-        '201':
-          description: Created
+                  $ref: '#/components/examples/RuleAlreadyExistsResponseExample'      
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
-        '404':
-          description: Not Found
     put:
       tags:
         - rule
@@ -524,16 +627,21 @@ paths:
               examples:
                 ok: 
                   $ref: '#/components/examples/RuleCreateOrModifyOkResponseExample'
-                notFound:
-                  $ref: '#/components/examples/RuleNotFoundResponseExample'
-        '201':
-          description: Created
+        '400':
+          description: Business Logic Error
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
         '404':
           description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/RuleNotFoundResponseExample'
     get:
       tags:
         - rule
@@ -566,13 +674,22 @@ paths:
                 $ref: '#/components/schemas/ResponseMessage'
               examples:
                 ok:
-                  $ref: '#/components/examples/RuleListOkResponseExample' 
+                  $ref: '#/components/examples/RuleListOkResponseExample'
+        '400':
+          description: Business Logic Error           
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
         '404':
           description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/RuleNotFoundResponseExample'          
   /contexts/{contextId}/rules/{ruleId}:
     get:
       tags:
@@ -608,14 +725,21 @@ paths:
               examples:
                 ok:
                   $ref: '#/components/examples/RuleGetOkResponseExample'
-                notExists:
-                  $ref: '#/components/examples/RuleNotFoundResponseExample' 
+        '400':
+          description: Business Logic Error           
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
         '404':
           description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/RuleNotFoundResponseExample' 
     delete:
       tags:
         - rule
@@ -650,14 +774,21 @@ paths:
               examples:
                 ok:
                   $ref: '#/components/examples/RuleGetOkResponseExample'
-                notExists:
-                  $ref: '#/components/examples/RuleNotFoundResponseExample'  
-        '204':
-          description: No Content
+        '400':
+          description: Business Logic Error    
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                notFound:
+                  $ref: '#/components/examples/RuleNotFoundResponseExample'
   /var-types:
     get:
       tags:
@@ -680,49 +811,15 @@ paths:
           description: Unauthorized
         '403':
           description: Forbidden
-        '404':
-          description: Not Found                     
-  /rule-executions:
-    post:
-      tags:
-        - executions
-      summary: run execution
-      description:  |
-        Run a execution over a context.
-      operationId: createExecution
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ExecutionCreateRequest'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/ResponseMessage'
-              examples:
-                ok: 
-                  $ref: '#/components/examples/ExecutionCreateOrModifyOkResponseExample'
-                
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
 components:
   schemas:
     ContextCreateRequest:
       title: ContextCreateRequest
       required:
-        - label        
+        - name        
       type: object
       properties:
-        label:
+        name:
           type: string
           maxLength: 100
           minLength: 10
@@ -732,12 +829,11 @@ components:
           maxLength: 1000
           minLength: 0
           example: "Service Broker Movistar Context"
-        ini_date:
+        internalContext:
           type: string
-          example: "2024-03-14 12:30:00"
-        end_date:
-          type: string
-          example: "2025-03-14 12:30:00"
+          maxLength: 50
+          minLength: 1
+          example: "SbMvtContext"   
         status:
           type: integer
           format: int32
@@ -746,14 +842,14 @@ components:
       title: ContextModifyRequest
       required:
         - contextId
-        - label        
+        - name        
       type: object
       properties:
         contextId:
           type: integer
           format: int32
           example: 1000
-        label:
+        name:
           type: string
           maxLength: 100
           minLength: 10
@@ -763,12 +859,11 @@ components:
           maxLength: 1000
           minLength: 0
           example: "New description for context"
-        ini_date:
+        internalContext:
           type: string
-          example: "2024-03-14 12:30:00"
-        end_date:
-          type: string
-          example: ""
+          maxLength: 50
+          minLength: 1
+          example: "SbMvtContext"   
         status:
           type: integer
           format: int32
@@ -778,7 +873,7 @@ components:
       required:
         - name
         - typeId
-        - format        
+        - direction        
       type: object
       properties:
         name:
@@ -795,7 +890,7 @@ components:
           type: integer
           format: int32
           example: 1000
-        format:
+        direction:
           type: string
           enum:
             - In
@@ -807,7 +902,7 @@ components:
         - variableId
         - name
         - typeId
-        - format        
+        - direction        
       type: object
       properties:
         variableId:
@@ -828,7 +923,7 @@ components:
           type: integer
           format: int32
           example: 1000
-        format:
+        direction:
           type: string
           enum:
             - In
@@ -856,11 +951,15 @@ components:
           format: int32
           example: 1
         when:
-          type: string
+          type: object
           example: "TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed"
         then:
-          type: string
-          example: "TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement"
+          type: array
+          items:
+            type: object
+          description: The actions to be executed when the rule is triggered
+          example: 
+            - "TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement"
         status:
           type: integer
           format: int32
@@ -901,23 +1000,28 @@ components:
           type: integer
           format: int32
           example: 1
-    ExecutionCreateRequest:
-      title: ExecutionCreateRequest
+    ExecuteCreateRequest:
+      title: ExecuteCreateRequest
       required:
-        - context
+        - name
         - variables        
       type: object
       properties:
-        label:
+        name:
           type: string
           maxLength: 100
           minLength: 10
           example: "SB_MVT_CONTEXT"
         variables:
-          type: array
+          type: object
           items:
               type:  object
-          example: [{"SpeedUp": true},{"Speed": 100}, {"MaxSpeed": 120}]
+              additionalProperties:
+                type: string
+          example: 
+            "SpeedUp": true
+            "Speed": 100
+            "MaxSpeed": 120
     ResponseMessage:
       title: ResponseMessage
       type: object
@@ -962,17 +1066,16 @@ components:
         descError: "OK"
         dto:
           contextId: 1000
-          label: "SV_MVT_CONTEXT"
-          description: "Service Broker Movistar Context" 
-          ini_date: "2024-03-14 12:30:00"
-          end_date: "2025-03-14 12:30:00" 
+          name: "SV_MVT_CONTEXT"
+          description: "Service Broker Movistar Context"
+          internalContext: "SbMvtContext" 
           statusId : 1
     ContextListOkResponseExample:
       value:      
         codError: 0
         descError: "OK"
         dto:
-          contexts: [{"contextId":1000,"label":"SV_MVT_CONTEXT", "description":"Service Broker Movistar Context", "ini_date":"2024-03-14 12:30:00", "end_date":"2025-03-14 12:30:00", "statusId":1},{"contextId":1001,"label":"TMP_TELCEL_CONTEXT", "description":"TMP Telcel Context", "ini_date":"2024-04-10 00:00:00", "end_date":"", "statusId":1} ]    
+          contexts: [{"contextId":1000,"name":"SV_MVT_CONTEXT", "description":"Service Broker Movistar Context", "internalContext": "SbMvtContext","statusId":1},{"contextId":1001,"name":"TMP_TELCEL_CONTEXT", "description":"TMP Telcel Context","internalContext": "SbMvtContext", "statusId":1} ]    
     ContextDeleteOkResponseExample:
      value:
       codError: 0
@@ -1004,13 +1107,13 @@ components:
           name: "BLOCKS_COUNTER"
           description: "Variable to storage a blocks counter"
           typeId: 1000
-          format: "In"
+          direction: "In"
     VariableListOkResponseExample:
       value:      
         codError: 0
         descError: "OK"
         dto:
-          variables: [{"variableId":1000,"name":"BLOCKS_COUNTER", "description":"Variable to storage a blocks counter", "typeId":1000, "format":"In"},{"variableId":1001,"name":"ROUTE_IP", "description":"Variable to storage a route ip", "typeId":1001, "format":"In"} ]    
+          variables: [{"variableId":1000,"name":"BLOCKS_COUNTER", "description":"Variable to storage a blocks counter", "typeId":1000, "direction":"In"},{"variableId":1001,"name":"ROUTE_IP", "description":"Variable to storage a route ip", "typeId":1001, "direction":"In"} ]    
     VariableDeleteOkResponseExample:
      value:
       codError: 0
@@ -1061,11 +1164,11 @@ components:
         descError: "OK"
         dto:
           contexts: [{"typeId":1000, "type":"Integer"},{"typeId":1001, "type":"String"},{"typeId":1002, "type":"Boolean"} ]    
-    ExecutionCreateOrModifyOkResponseExample:
+    ExecuteCreateOrModifyOkResponseExample:
      value:
       codError: 0
       descError: "OK"
       dto:
         contextId: 1000
-        label: "SB_MVT_CONTEXT"
+        name: "SB_MVT_CONTEXT"
         variables: [{"Speed":110}]
