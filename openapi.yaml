@@ -40,8 +40,6 @@ tags:
       url: http://swagger.io
   - name: rule
     description: Operations about rules
-  - name: executions
-    description: Operations about executions
 paths:
   /contexts:
     post:
