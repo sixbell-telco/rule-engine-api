@@ -7,7 +7,7 @@ This OpenAPI specification defines the API endpoints for the Rule Engine, a syst
 To generate server code from this OpenAPI specification, you'll need to install the OpenAPI CLI (OpenAPI Generator). Follow the installation guide provided by OpenAPI:
 <div style="text-align: center;">
     <a href="https://openapi-generator.tech/docs/installation/">
-        <img src="img/openapi-logo.svg" alt="OpenAPI Logo" style="width: 256px; height: 256px;">
+        <img src="img/openapi-logo.png" alt="OpenAPI Logo">
     </a>
 
  [OpenAPI CLI Installation Guide](https://openapi-generator.tech/docs/installation/)
